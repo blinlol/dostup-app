@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Доступ</string>
+    <string name="widget_name">Статус доступа</string>
+    <string name="label_whitelist">Белый</string>
+    <string name="label_ordinary">Обычный</string>
+    <string name="label_blocked">Запрет</string>
+    <string name="status_checking">Проверяем…</string>
+    <string name="status_no_network">Нет сети</string>
+    <string name="status_tap_to_check">Нажмите для проверки</string>
+    <string name="add_widget_instructions">Как добавить виджет\n\n1. Долгое нажатие на свободное место рабочего стола.\n2. Выберите «Виджеты».\n3. Найдите «Статус доступа» и перетащите на рабочий стол.\n\nНажмите на виджет, чтобы проверить, что открывается в текущей сети.\n\nВ этом экране нет настроек и подробностей проверки.</string>
+</resources>

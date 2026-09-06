@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="cell_available">#2E7D32</color>
+    <color name="cell_unavailable">#C62828</color>
+    <color name="cell_idle">#9E9E9E</color>
+    <color name="cell_text">#FFFFFFFF</color>
+    <color name="status_text">#FF212121</color>
+    <color name="widget_bg">#FFF5F5F5</color>
+    <color name="ic_launcher_background">#2E7D32</color>
+    <color name="screen_bg">#FFFFFFFF</color>
+</resources>

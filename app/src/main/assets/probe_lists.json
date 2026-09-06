@@ -1,0 +1,26 @@
+{
+  "version": 1,
+  "groups": {
+    "whitelist": [
+      "https://gosuslugi.ru",
+      "https://yandex.ru",
+      "https://vk.com",
+      "https://mail.ru",
+      "https://sberbank.ru"
+    ],
+    "ordinary": [
+      "https://wikipedia.org",
+      "https://github.com",
+      "https://habr.com",
+      "https://cloudflare.com",
+      "https://apple.com"
+    ],
+    "blocked": [
+      "https://instagram.com",
+      "https://facebook.com",
+      "https://x.com",
+      "https://discord.com",
+      "https://linkedin.com"
+    ]
+  }
+}
