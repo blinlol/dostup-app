@@ -17,18 +17,21 @@ object WidgetPresenter {
             ordinary = CellUi(CellTone.Idle),
             blocked = CellUi(CellTone.Idle),
             statusLine = if (state is WidgetState.Checking) STATUS_CHECKING else STATUS_TAP_TO_CHECK,
+            showSpinner = state is WidgetState.Checking,
         )
         is WidgetState.NoNetwork -> WidgetUi(
             whitelist = CellUi(CellTone.Idle),
             ordinary = CellUi(CellTone.Idle),
             blocked = CellUi(CellTone.Idle),
             statusLine = "${STATUS_NO_NETWORK} ${timeFormat.format(state.at)}",
+            showSpinner = false,
         )
         is WidgetState.Ready -> WidgetUi(
             whitelist = CellUi(tone(state.whitelistAvailable)),
             ordinary = CellUi(tone(state.ordinaryAvailable)),
             blocked = CellUi(tone(state.blockedAvailable)),
             statusLine = timeFormat.format(state.at),
+            showSpinner = false,
         )
     }
 

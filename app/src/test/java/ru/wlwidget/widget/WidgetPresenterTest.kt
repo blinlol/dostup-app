@@ -23,6 +23,7 @@ class WidgetPresenterTest {
         assertEquals(CellTone.Available, ui.ordinary.tone)
         assertEquals(CellTone.Available, ui.blocked.tone)
         assertEquals(expectedTime, ui.statusLine)
+        assertEquals(false, ui.showSpinner)
     }
 
     @Test
@@ -53,12 +54,14 @@ class WidgetPresenterTest {
         assertEquals(CellTone.Idle, noNetwork.blocked.tone)
         assertTrue(noNetwork.statusLine.startsWith(WidgetPresenter.STATUS_NO_NETWORK))
         assertTrue(noNetwork.statusLine.contains(expectedTime))
+        assertEquals(false, noNetwork.showSpinner)
 
         val allFailed = WidgetPresenter.present(WidgetState.Ready(false, false, false, at))
         assertEquals(CellTone.Unavailable, allFailed.whitelist.tone)
         assertEquals(CellTone.Unavailable, allFailed.ordinary.tone)
         assertEquals(CellTone.Unavailable, allFailed.blocked.tone)
         assertEquals(expectedTime, allFailed.statusLine)
+        assertEquals(false, allFailed.showSpinner)
     }
 
     @Test
@@ -66,6 +69,8 @@ class WidgetPresenterTest {
         val ui = WidgetPresenter.present(WidgetState.Checking)
         assertEquals(WidgetPresenter.STATUS_CHECKING, ui.statusLine)
         assertEquals(CellTone.Idle, ui.whitelist.tone)
+        assertEquals(true, ui.showSpinner)
+        assertEquals(false, WidgetPresenter.present(WidgetState.Idle).showSpinner)
     }
 
     @Test
@@ -79,5 +84,10 @@ class WidgetPresenterTest {
         assertTrue(xml.contains("Белый") || xml.contains("label_whitelist"))
         assertTrue(xml.contains("label_ordinary"))
         assertTrue(xml.contains("label_blocked"))
+        val spinnerAt = xml.indexOf("status_spinner")
+        val statusAt = xml.indexOf("status_line")
+        assertTrue(spinnerAt >= 0 && statusAt > spinnerAt)
+        assertTrue(xml.contains("android:indeterminate=\"true\""))
+        assertTrue(xml.contains("android:visibility=\"gone\""))
     }
 }
