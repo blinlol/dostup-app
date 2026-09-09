@@ -23,6 +23,7 @@ class StatusWidgetProvider : AppWidgetProvider() {
     override fun onReceive(context: Context, intent: android.content.Intent) {
         super.onReceive(context, intent)
         if (intent.action != WidgetBinder.ACTION_REFRESH) return
+        app(context).container.stateStore.save(WidgetState.Checking)
         WidgetBinder.updateAll(context, WidgetState.Checking)
         WorkManager.getInstance(context).enqueueUniqueWork(
             RefreshWorker.WORK_NAME,

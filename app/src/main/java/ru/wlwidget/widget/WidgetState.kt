@@ -23,4 +23,5 @@ data class WidgetUi(
     val ordinary: CellUi,
     val blocked: CellUi,
     val statusLine: String,
+    val showSpinner: Boolean,
 )

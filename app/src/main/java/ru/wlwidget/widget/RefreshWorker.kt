@@ -11,6 +11,7 @@ class RefreshWorker(
 ) : CoroutineWorker(context, params) {
     override suspend fun doWork(): Result {
         val container = (applicationContext as WlApp).container
+        WidgetBinder.updateAll(applicationContext, WidgetState.Checking)
         val state = container.pipeline.refresh()
         container.stateStore.save(state)
         WidgetBinder.updateAll(applicationContext, state)

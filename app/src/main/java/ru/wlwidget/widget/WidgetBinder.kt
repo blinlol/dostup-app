@@ -6,6 +6,7 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.view.View
 import android.widget.RemoteViews
 import ru.wlwidget.R
 
@@ -19,6 +20,10 @@ object WidgetBinder {
         bindCell(views, R.id.cell_ordinary, ui.ordinary)
         bindCell(views, R.id.cell_blocked, ui.blocked)
         views.setTextViewText(R.id.status_line, ui.statusLine)
+        views.setViewVisibility(
+            R.id.status_spinner,
+            if (ui.showSpinner) View.VISIBLE else View.GONE,
+        )
         views.setOnClickPendingIntent(R.id.widget_root, refreshIntent(context, widgetId))
         return views
     }
