@@ -3,6 +3,21 @@ plugins {
     id("org.jetbrains.kotlin.android")
 }
 
+fun envOrProp(name: String): String? =
+    (findProperty(name) as String?) ?: System.getenv(name)
+
+val appVersionName = (findProperty("appVersionName") as String?) ?: "0.0.0-dev"
+val appVersionCode = (findProperty("appVersionCode") as String?)?.toInt() ?: 1
+
+val releaseStorePassword = envOrProp("KEYSTORE_PASSWORD")
+val releaseKeyAlias = envOrProp("KEY_ALIAS")
+val releaseKeyPassword = envOrProp("KEY_PASSWORD")
+val releaseStore = envOrProp("RELEASE_STORE_FILE")?.let { file(it) }?.takeIf { it.isFile }
+val canSignRelease = releaseStore != null &&
+    !releaseStorePassword.isNullOrBlank() &&
+    !releaseKeyAlias.isNullOrBlank() &&
+    !releaseKeyPassword.isNullOrBlank()
+
 android {
     namespace = "ru.wlwidget"
     compileSdk = 35
@@ -11,8 +26,19 @@ android {
         applicationId = "ru.wlwidget"
         minSdk = 26
         targetSdk = 35
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = appVersionCode
+        versionName = appVersionName
+    }
+
+    signingConfigs {
+        if (canSignRelease) {
+            create("release") {
+                storeFile = checkNotNull(releaseStore)
+                storePassword = checkNotNull(releaseStorePassword)
+                keyAlias = checkNotNull(releaseKeyAlias)
+                keyPassword = checkNotNull(releaseKeyPassword)
+            }
+        }
     }
 
     buildTypes {
@@ -22,6 +48,9 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro",
             )
+            if (canSignRelease) {
+                signingConfig = signingConfigs.getByName("release")
+            }
         }
     }
 
