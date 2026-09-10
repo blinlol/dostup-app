@@ -32,6 +32,12 @@ jobs:
           VERSION_CODE=$((MAJOR * 10000 + MINOR * 100 + PATCH))
           echo "version_name=${VERSION_NAME}" >> "$GITHUB_OUTPUT"
           echo "version_code=${VERSION_CODE}" >> "$GITHUB_OUTPUT"
+      - name: Ensure signing secrets are present
+        run: |
+          test -n "${{ secrets.KEYSTORE_BASE64 }}"
+          test -n "${{ secrets.KEYSTORE_PASSWORD }}"
+          test -n "${{ secrets.KEY_ALIAS }}"
+          test -n "${{ secrets.KEY_PASSWORD }}"
       - name: Decode release keystore
         run: echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > "$RUNNER_TEMP/release.jks"
       - name: Test and signed release APK
