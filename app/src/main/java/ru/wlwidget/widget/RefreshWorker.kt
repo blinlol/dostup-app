@@ -11,14 +11,13 @@ class RefreshWorker(
 ) : CoroutineWorker(context, params) {
     override suspend fun doWork(): Result {
         val container = (applicationContext as WlApp).container
-        WidgetBinder.updateAll(applicationContext, WidgetState.Checking)
+        val trigger = RefreshTrigger.fromKey(inputData.getString(RefreshScheduler.KEY_TRIGGER))
+        if (trigger == RefreshTrigger.TAP) {
+            WidgetBinder.updateAll(applicationContext, WidgetState.Checking)
+        }
         val state = container.pipeline.refresh()
         container.stateStore.save(state)
         WidgetBinder.updateAll(applicationContext, state)
         return Result.success()
-    }
-
-    companion object {
-        const val WORK_NAME = "tap-refresh"
     }
 }

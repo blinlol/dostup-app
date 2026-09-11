@@ -63,22 +63,33 @@ class WidgetStateStoreTest {
         assertTrue(provider.contains("ACTION_REFRESH"))
         val saveChecking = provider.indexOf("stateStore.save(WidgetState.Checking)")
         val paintChecking = provider.indexOf("WidgetBinder.updateAll(context, WidgetState.Checking)")
+        val enqueueTap = provider.indexOf("RefreshScheduler.enqueue(context, RefreshTrigger.TAP)")
         assertTrue(saveChecking >= 0 && paintChecking > saveChecking)
-        assertTrue(provider.contains("OneTimeWorkRequestBuilder<RefreshWorker>"))
-        assertTrue(!provider.contains("PeriodicWorkRequest"))
-        assertTrue(!provider.contains("NetworkCallback"))
-        assertTrue(!provider.contains("registerDefaultNetworkCallback"))
+        assertTrue(enqueueTap > paintChecking)
+        assertTrue(provider.contains("autoRefresh.start()"))
+        assertTrue(provider.contains("autoRefresh.stop()"))
+        assertTrue(provider.contains("onDisabled"))
     }
 
     @Test
-    fun refreshWorkerPaintsCheckingBeforeTerminal() {
+    fun refreshWorkerPaintsCheckingOnlyForTap() {
         val worker = java.io.File("src/main/java/ru/wlwidget/widget/RefreshWorker.kt").readText()
+        val tapGuard = worker.indexOf("trigger == RefreshTrigger.TAP")
         val paintChecking = worker.indexOf("WidgetBinder.updateAll(applicationContext, WidgetState.Checking)")
         val refresh = worker.indexOf("pipeline.refresh()")
         val save = worker.indexOf("stateStore.save(state)")
         val paintTerminal = worker.lastIndexOf("WidgetBinder.updateAll(applicationContext, state)")
-        assertTrue(paintChecking >= 0 && refresh > paintChecking)
+        assertTrue(tapGuard >= 0 && paintChecking > tapGuard && refresh > paintChecking)
         assertTrue(save > refresh && paintTerminal > save)
+        val scheduler = java.io.File("src/main/java/ru/wlwidget/widget/RefreshScheduler.kt").readText()
+        assertTrue(scheduler.contains("OneTimeWorkRequestBuilder<RefreshWorker>"))
+        assertTrue(scheduler.contains("KEY_TRIGGER"))
+        val periodic = java.io.File("src/main/java/ru/wlwidget/widget/PeriodicRefreshWorker.kt").readText()
+        val auto = java.io.File("src/main/java/ru/wlwidget/widget/AutoRefreshController.kt").readText()
+        assertTrue(!periodic.contains("updateAll"))
+        assertTrue(!auto.contains("WidgetState.Checking"))
+        assertTrue(auto.contains("RefreshTrigger.NETWORK"))
+        assertTrue(periodic.contains("RefreshTrigger.PERIODIC"))
     }
 
     private class InMemoryStore : StringStore {
