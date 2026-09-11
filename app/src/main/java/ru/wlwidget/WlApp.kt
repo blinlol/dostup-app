@@ -9,6 +9,7 @@ import ru.wlwidget.probe.Clock
 import ru.wlwidget.probe.HttpsGetTransport
 import ru.wlwidget.probe.ProbeEngine
 import ru.wlwidget.probe.RefreshPipeline
+import ru.wlwidget.widget.AutoRefreshController
 import ru.wlwidget.widget.StringStore
 import ru.wlwidget.widget.WidgetStateStore
 import java.time.Instant
@@ -31,6 +32,7 @@ class AppContainer(context: Context) {
             }
         },
     )
+    val autoRefresh = AutoRefreshController(appContext)
 
     private companion object {
         const val KEY = "last"
@@ -44,5 +46,8 @@ class WlApp : Application() {
     override fun onCreate() {
         super.onCreate()
         container = AppContainer(this)
+        if (AutoRefreshController.widgetsExist(this)) {
+            container.autoRefresh.start()
+        }
     }
 }
