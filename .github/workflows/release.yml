@@ -16,7 +16,10 @@ jobs:
         with:
           distribution: temurin
           java-version: "17"
+      # Default packages include obsolete `tools`, which sdkmanager no longer serves.
       - uses: android-actions/setup-android@v4
+        with:
+          packages: ''
       - name: Parse version from tag
         id: version
         run: |
