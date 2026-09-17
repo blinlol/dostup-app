@@ -1,19 +1,4 @@
-# probe-lists Specification
-
-## Purpose
-
-Supplies the three address groups used for classification from a versioned bundled file, with a source that can later be swapped for a network download.
-
-## Requirements
-
-### Requirement: Three role-based groups
-
-The list source MUST provide three named groups: whitelist (sites expected to stay up in whitelist-only mode), ordinary (sites expected to stay up under everyday blocking and fail in whitelist-only mode), and blocked (sites typically closed under everyday blocking).
-
-#### Scenario: Consumers receive three groups
-
-- **WHEN** a check asks the list source for targets
-- **THEN** it receives the whitelist, ordinary, and blocked groups and no other groups
+## MODIFIED Requirements
 
 ### Requirement: Odd size of at least five
 
@@ -53,14 +38,7 @@ The app MUST ship the three groups as a versioned data file. Checks MUST NOT req
 - **WHEN** the app is updated with new bundled lists and the user has never successfully saved lists
 - **THEN** subsequent checks use the new bundled lists
 
-### Requirement: Replaceable list source
-
-Check and widget logic MUST obtain addresses only through the list source. A later change MUST be able to add a network-backed source that returns the same three groups without changing verdict rules or widget fields.
-
-#### Scenario: Same groups after a future source swap
-
-- **WHEN** a later change supplies lists from the network through the same source
-- **THEN** checks still request whitelist, ordinary, and blocked groups and still apply the same majority verdict rules
+## ADDED Requirements
 
 ### Requirement: User overlay replaces all three groups
 
