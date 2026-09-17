@@ -3,6 +3,10 @@ plugins {
     id("org.jetbrains.kotlin.android")
 }
 
+kotlin {
+    jvmToolchain(17)
+}
+
 fun envOrProp(name: String): String? =
     (findProperty(name) as String?) ?: System.getenv(name)
 
