@@ -13,7 +13,7 @@ class JsonListSource(json: String) : ListSource {
         fun array(name: String): List<String> {
             require(rawGroups.has(name)) { "Missing group $name" }
             val array = rawGroups.getJSONArray(name)
-            return (0 until array.length()).map { array.getString(it) }
+            return (0 until array.length()).map { array.getString(it).trim() }
         }
         return ProbeGroups(
             whitelist = array("whitelist"),

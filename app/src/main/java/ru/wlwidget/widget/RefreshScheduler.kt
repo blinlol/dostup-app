@@ -46,4 +46,12 @@ object RefreshScheduler {
             .build()
         WorkManager.getInstance(context).enqueueUniqueWork(WORK_NAME, workPolicy, request)
     }
+
+    fun enqueueUserCheckIfWidgetsExist(context: Context) {
+        if (!AutoRefreshController.widgetsExist(context)) return
+        val app = context.applicationContext as WlApp
+        app.container.stateStore.save(WidgetState.Checking)
+        WidgetBinder.updateAll(context, WidgetState.Checking)
+        enqueue(context, RefreshTrigger.TAP)
+    }
 }

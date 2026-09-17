@@ -8,5 +8,12 @@
     <string name="status_checking">Проверяем…</string>
     <string name="status_no_network">Нет сети</string>
     <string name="status_tap_to_check">Нажмите для проверки</string>
-    <string name="add_widget_instructions">Как добавить виджет\n\n1. Долгое нажатие на свободное место рабочего стола.\n2. Выберите «Виджеты».\n3. Найдите «Статус доступа» и перетащите на рабочий стол.\n\nНажмите на виджет, чтобы проверить, что открывается в текущей сети.\n\nВ этом экране нет настроек и подробностей проверки.</string>
+    <string name="help_title">Как добавить виджет</string>
+    <string name="help_button">Как добавить виджет</string>
+    <string name="add_widget_instructions">1. Долгое нажатие на свободное место рабочего стола.\n2. Выберите «Виджеты».\n3. Найдите «Статус доступа» и перетащите на рабочий стол.\n\nНажмите на виджет, чтобы проверить, что открывается в текущей сети.</string>
+    <string name="add_url">Добавить адрес</string>
+    <string name="remove_url">Удалить адрес</string>
+    <string name="url_hint">https://example.com</string>
+    <string name="save_lists">Сохранить</string>
+    <string name="reset_lists">Сбросить к встроенным</string>
 </resources>

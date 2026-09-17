@@ -22,6 +22,10 @@ class ArchitectureGuardTest {
                 }
             }
         assertTrue("Unexpected list-file I/O:\n${hits.joinToString("\n")}", hits.isEmpty())
+        val app = File("src/main/java/ru/wlwidget/WlApp.kt").readText()
+        assertTrue(app.contains("OverlayListSource"))
+        assertTrue(app.contains("lists = listSource"))
+        assertTrue(app.contains("AssetListSource"))
     }
 
     @Test
@@ -62,12 +66,26 @@ class ArchitectureGuardTest {
     fun launcherScreenHasInstructionsOnly() {
         val activity = File("src/main/java/ru/wlwidget/MainActivity.kt").readText()
         val layout = File("src/main/res/layout/activity_main.xml").readText()
+        val row = File("src/main/res/layout/item_probe_url.xml").readText()
         val strings = File("src/main/res/values/strings.xml").readText()
+        val binder = File("src/main/java/ru/wlwidget/widget/WidgetBinder.kt").readText()
         assertTrue(activity.contains("activity_main"))
-        assertFalse(activity.contains("settings") || activity.contains("Settings"))
-        assertTrue(layout.contains("add_widget_instructions"))
+        assertTrue(activity.contains("overlay.groups()"))
+        assertTrue(activity.contains("overlay.save"))
+        assertTrue(activity.contains("overlay.clear()"))
+        assertTrue(activity.contains("AlertDialog"))
+        assertTrue(activity.contains("add_widget_instructions"))
+        assertTrue(layout.contains("whitelist_urls") && layout.contains("ordinary_urls") && layout.contains("blocked_urls"))
+        assertTrue(layout.contains("whitelist_add") && layout.contains("ordinary_add") && layout.contains("blocked_add"))
+        assertTrue(layout.contains("button_save") && layout.contains("button_reset"))
+        assertTrue(layout.contains("button_help") && layout.contains("layout_gravity=\"top|end\""))
+        assertTrue(row.contains("url_input") && row.contains("url_remove"))
         assertTrue(strings.contains("Как добавить виджет"))
-        assertTrue(strings.contains("нет настроек"))
+        assertTrue(strings.contains("Сохранить"))
+        assertTrue(strings.contains("Сбросить к встроенным"))
+        assertFalse(strings.contains("нет настроек"))
+        assertFalse(binder.contains("MainActivity"))
+        assertFalse(activity.contains("pipeline.refresh()"))
     }
 
     @Test
@@ -75,10 +93,36 @@ class ArchitectureGuardTest {
         val pipeline = File("src/main/java/ru/wlwidget/probe/RefreshPipeline.kt").readText()
         val refreshWorker = File("src/main/java/ru/wlwidget/widget/RefreshWorker.kt").readText()
         val periodic = File("src/main/java/ru/wlwidget/widget/PeriodicRefreshWorker.kt").readText()
+        val scheduler = File("src/main/java/ru/wlwidget/widget/RefreshScheduler.kt").readText()
+        val activity = File("src/main/java/ru/wlwidget/MainActivity.kt").readText()
         assertTrue(pipeline.contains("suspend fun refresh()"))
         assertTrue(refreshWorker.contains("pipeline.refresh()"))
         assertFalse(periodic.contains("pipeline.refresh()"))
+        assertFalse(activity.contains("pipeline.refresh()"))
         assertTrue(periodic.contains("RefreshScheduler.enqueue"))
         assertTrue(periodic.contains("RefreshTrigger.PERIODIC"))
+        assertTrue(scheduler.contains("RefreshTrigger.TAP"))
+        assertFalse(scheduler.contains("SAVE"))
+        assertTrue(scheduler.contains("enum class RefreshTrigger"))
+        assertTrue(scheduler.contains("TAP(") && scheduler.contains("NETWORK(") && scheduler.contains("PERIODIC("))
+    }
+
+    @Test
+    fun saveStartsTapCheckOnlyWhenWidgetsExist() {
+        val scheduler = File("src/main/java/ru/wlwidget/widget/RefreshScheduler.kt").readText()
+        val activity = File("src/main/java/ru/wlwidget/MainActivity.kt").readText()
+        val helper = scheduler.substringAfter("fun enqueueUserCheckIfWidgetsExist")
+        val widgetsExist = helper.indexOf("AutoRefreshController.widgetsExist")
+        val persistOnly = helper.indexOf("return")
+        val saveChecking = helper.indexOf("stateStore.save(WidgetState.Checking)")
+        val paintChecking = helper.indexOf("WidgetBinder.updateAll(context, WidgetState.Checking)")
+        val enqueueTap = helper.indexOf("enqueue(context, RefreshTrigger.TAP)")
+        assertTrue(widgetsExist >= 0 && persistOnly > widgetsExist)
+        assertTrue(saveChecking > persistOnly && paintChecking > saveChecking && enqueueTap > paintChecking)
+        assertFalse(helper.contains("pipeline.refresh()"))
+        val overlaySave = activity.indexOf("overlay.save")
+        val enqueueHelper = activity.indexOf("RefreshScheduler.enqueueUserCheckIfWidgetsExist")
+        assertTrue(overlaySave >= 0 && enqueueHelper > overlaySave)
+        assertFalse(activity.contains("pipeline.refresh()"))
     }
 }

@@ -4,6 +4,7 @@ import android.app.Application
 import android.content.Context
 import kotlinx.coroutines.Dispatchers
 import ru.wlwidget.lists.AssetListSource
+import ru.wlwidget.lists.OverlayListSource
 import ru.wlwidget.probe.AndroidNetworkStatus
 import ru.wlwidget.probe.Clock
 import ru.wlwidget.probe.HttpsGetTransport
@@ -16,7 +17,16 @@ import java.time.Instant
 
 class AppContainer(context: Context) {
     private val appContext = context.applicationContext
-    val listSource = AssetListSource(appContext)
+    val listSource = OverlayListSource(
+        store = object : StringStore {
+            private val prefs = appContext.getSharedPreferences("probe_lists", Context.MODE_PRIVATE)
+            override fun read(): String? = prefs.getString(OVERLAY_KEY, null)
+            override fun write(value: String?) {
+                prefs.edit().putString(OVERLAY_KEY, value).apply()
+            }
+        },
+        bundled = AssetListSource(appContext),
+    )
     val pipeline = RefreshPipeline(
         network = AndroidNetworkStatus(appContext),
         lists = listSource,
@@ -36,6 +46,7 @@ class AppContainer(context: Context) {
 
     private companion object {
         const val KEY = "last"
+        const val OVERLAY_KEY = "overlay"
     }
 }
 
